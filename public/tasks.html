@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create, manage, and track your tasks with TaskManager's intuitive CRUD interface.">
+    <title>TaskManager — Your Tasks</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar-custom">
+        <div class="container-custom" style="display:flex;justify-content:space-between;align-items:center;">
+            <a href="index.html" class="navbar-brand" style="text-decoration:none;">TaskManager</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" style="display:none;background:none;border:1px solid var(--border-color);border-radius:6px;padding:6px 10px;cursor:pointer;">
+                <svg width="22" height="22" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+            </button>
+            <div class="nav-links" id="navLinks" style="display:flex;gap:4px;align-items:center;">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="tasks.html" class="nav-link active">Tasks</a>
+                <a href="about.html" class="nav-link">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main style="flex-grow:1;padding:3rem 0;">
+        <div class="container-custom">
+
+            <!-- Add Task Form -->
+            <div class="form-card fade-in" style="max-width:700px;margin:0 auto 3rem;">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:2rem;">
+                    <div class="feature-icon" style="margin-bottom:0;flex-shrink:0;">
+                        <svg width="22" height="22" fill="none" stroke="var(--accent-primary)" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                    </div>
+                    <div>
+                        <h2 style="font-weight:700;font-size:1.3rem;margin:0;">Add New Task</h2>
+                        <p style="color:var(--text-muted);font-size:0.82rem;margin:0;">Fill in the details below to create a new task.</p>
+                    </div>
+                </div>
+                <form id="taskForm">
+                    <div style="margin-bottom:1.2rem;">
+                        <label class="form-label-custom">Title</label>
+                        <input type="text" class="form-input" id="title" required placeholder="What needs to be done?">
+                    </div>
+                    <div style="margin-bottom:1.2rem;">
+                        <label class="form-label-custom">Description</label>
+                        <textarea class="form-input" id="description" rows="3" placeholder="Add some details..."></textarea>
+                    </div>
+                    <div style="margin-bottom:1.8rem;">
+                        <label class="form-label-custom">Status</label>
+                        <select class="form-input" id="status">
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <span id="submitText">Create Task</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Task List -->
+            <div class="fade-in fade-in-d1">
+                <div class="page-header">
+                    <div class="title">Your Tasks</div>
+                    <div class="task-count" id="taskCount">Loading...</div>
+                </div>
+                <div id="taskList" class="task-grid">
+                    <div class="loader"><div class="spinner"></div></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-custom">
+        <div class="container-custom">
+            <div class="footer-brand">TaskManager</div>
+            <div class="footer-divider"></div>
+            <p>Assignment 4 — Web Technologies CSC-251</p>
+            <p>Student: <strong style="color:var(--text-secondary);">Adan</strong> · Roll No: <strong style="color:var(--text-secondary);">1006</strong></p>
+            <p>PMAS Arid Agriculture University Rawalpindi</p>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = '/api/tasks';
+
+        // Toast notification
+        function showToast(message, isError = false) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast-msg' + (isError ? ' error' : '');
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Mobile nav toggle
+        const toggle = document.getElementById('navToggle');
+        const links = document.getElementById('navLinks');
+        if (toggle) {
+            toggle.addEventListener('click', () => {
+                links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+            });
+        }
+        function checkNav() {
+            if (window.innerWidth <= 768) {
+                toggle.style.display = 'block';
+                links.style.flexDirection = 'column';
+                links.style.position = 'absolute';
+                links.style.top = '100%';
+                links.style.left = '0';
+                links.style.right = '0';
+                links.style.background = 'rgba(10,10,15,0.95)';
+                links.style.padding = '1rem';
+                links.style.borderBottom = '1px solid var(--border-color)';
+                links.style.display = 'none';
+            } else {
+                toggle.style.display = 'none';
+                links.style.flexDirection = 'row';
+                links.style.position = 'static';
+                links.style.background = 'none';
+                links.style.padding = '0';
+                links.style.borderBottom = 'none';
+                links.style.display = 'flex';
+            }
+        }
+        checkNav();
+        window.addEventListener('resize', checkNav);
+
+        // Fetch tasks on load
+        document.addEventListener('DOMContentLoaded', fetchTasks);
+        document.getElementById('taskForm').addEventListener('submit', addTask);
+
+        async function fetchTasks() {
+            try {
+                const response = await fetch(API_URL);
+                const tasks = await response.json();
+                renderTasks(tasks);
+            } catch (error) {
+                console.error('Error fetching tasks:', error);
+                document.getElementById('taskList').innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><div class="message">Could not connect to server. Please try again.</div></div>';
+                document.getElementById('taskCount').textContent = 'Error';
+            }
+        }
+
+        function renderTasks(tasks) {
+            const taskList = document.getElementById('taskList');
+            const taskCount = document.getElementById('taskCount');
+            taskList.innerHTML = '';
+
+            if (!Array.isArray(tasks) || tasks.length === 0) {
+                taskList.innerHTML = '<div class="empty-state"><div class="icon">📋</div><div class="message">No tasks yet. Create one above!</div></div>';
+                taskCount.textContent = '0 tasks';
+                return;
+            }
+
+            taskCount.textContent = tasks.length + ' task' + (tasks.length !== 1 ? 's' : '');
+
+            tasks.forEach((task, index) => {
+                const statusClass = task.status === 'in-progress' ? 'in-progress' : task.status;
+                const card = document.createElement('div');
+                card.className = 'task-card status-' + task.status;
+                card.style.animationDelay = (index * 0.05) + 's';
+
+                const date = new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+                card.innerHTML = `
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:0.4rem;">
+                        <h4 class="task-title" title="${task.title}">${task.title}</h4>
+                        <span class="status-badge ${statusClass}">
+                            <span class="status-dot"></span>
+                            ${task.status}
+                        </span>
+                    </div>
+                    <p class="task-desc">${task.description || 'No description provided.'}</p>
+                    <div class="task-meta">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <select class="status-select" onchange="updateStatus('${task._id}', this.value)">
+                                <option value="pending" ${task.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="in-progress" ${task.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+                                <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Completed</option>
+                            </select>
+                            <span style="font-size:0.72rem;color:var(--text-muted);">${date}</span>
+                        </div>
+                        <button class="btn-danger-custom" onclick="deleteTask('${task._id}')">
+                            Delete
+                        </button>
+                    </div>
+                `;
+                taskList.appendChild(card);
+            });
+        }
+
+        async function addTask(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('submitText');
+            btn.disabled = true;
+            btnText.textContent = 'Creating...';
+
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const status = document.getElementById('status').value;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, description, status })
+                });
+
+                if (response.ok) {
+                    document.getElementById('taskForm').reset();
+                    showToast('Task created successfully!');
+                    fetchTasks();
+                } else {
+                    const err = await response.json();
+                    showToast('Error: ' + err.message, true);
+                }
+            } catch (error) {
+                console.error('Error adding task:', error);
+                showToast('Failed to create task.', true);
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = 'Create Task';
+            }
+        }
+
+        async function updateStatus(id, newStatus) {
+            try {
+                const response = await fetch(`${API_URL}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                if (response.ok) {
+                    showToast('Status updated!');
+                    fetchTasks();
+                } else {
+                    const err = await response.json();
+                    showToast('Error: ' + err.message, true);
+                }
+            } catch (error) {
+                console.error('Error updating task:', error);
+                showToast('Failed to update task.', true);
+            }
+        }
+
+        async function deleteTask(id) {
+            if (!confirm('Are you sure you want to delete this task?')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showToast('Task deleted.');
+                    fetchTasks();
+                } else {
+                    const err = await response.json();
+                    showToast('Error: ' + err.message, true);
+                }
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                showToast('Failed to delete task.', true);
+            }
+        }
+    </script>
+</body>
+</html>

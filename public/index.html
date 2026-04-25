@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TaskManager — A modern full-stack task management app built with Node.js, Express, and MongoDB Atlas.">
+    <title>TaskManager — Manage Your Tasks Efficiently</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar-custom">
+        <div class="container-custom" style="display:flex;justify-content:space-between;align-items:center;">
+            <a href="index.html" class="navbar-brand" style="text-decoration:none;">TaskManager</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" style="display:none;background:none;border:1px solid var(--border-color);border-radius:6px;padding:6px 10px;cursor:pointer;">
+                <svg width="22" height="22" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+            </button>
+            <div class="nav-links" id="navLinks" style="display:flex;gap:4px;align-items:center;">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="tasks.html" class="nav-link">Tasks</a>
+                <a href="about.html" class="nav-link">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="container-custom hero-content" style="text-align:center;">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                Full-Stack Application — Live & Deployed
+            </div>
+            <h1 class="hero-title">
+                Manage Tasks<br>
+                <span class="gradient-text">Like a Pro.</span>
+            </h1>
+            <p class="hero-subtitle">
+                A sleek, full-stack CRUD application powered by Node.js, Express & MongoDB Atlas. Built for productivity.
+            </p>
+            <a href="tasks.html" class="btn-primary-custom">
+                Get Started
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </header>
+
+    <!-- Stats Strip -->
+    <section style="background:var(--bg-secondary);border-bottom:1px solid var(--border-color);">
+        <div class="container-custom stats-strip">
+            <div class="stat-item fade-in">
+                <div class="stat-number">4</div>
+                <div class="stat-label">API Routes</div>
+            </div>
+            <div class="stat-item fade-in fade-in-d1">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Pages</div>
+            </div>
+            <div class="stat-item fade-in fade-in-d2">
+                <div class="stat-number">REST</div>
+                <div class="stat-label">Architecture</div>
+            </div>
+            <div class="stat-item fade-in fade-in-d3">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Cloud Hosted</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section style="padding:80px 0;">
+        <div class="container-custom">
+            <div style="text-align:center;margin-bottom:3rem;">
+                <p class="section-label">Capabilities</p>
+                <h2 class="section-title">Powerful Features</h2>
+                <p class="section-subtitle">Everything you need to manage your workflow efficiently.</p>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;">
+                <div class="glass-card fade-in">
+                    <div class="feature-icon">➕</div>
+                    <h3 class="feature-title">Create Tasks</h3>
+                    <p class="feature-desc">Add tasks with titles, descriptions, and priority statuses. Stay organized effortlessly.</p>
+                </div>
+                <div class="glass-card fade-in fade-in-d1">
+                    <div class="feature-icon">🔄</div>
+                    <h3 class="feature-title">Track Progress</h3>
+                    <p class="feature-desc">Update task statuses between pending, in-progress, and completed in real-time.</p>
+                </div>
+                <div class="glass-card fade-in fade-in-d2">
+                    <div class="feature-icon">🗑️</div>
+                    <h3 class="feature-title">Clean Up</h3>
+                    <p class="feature-desc">Remove completed or outdated tasks with a single click. Keep your board fresh.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section style="padding:60px 0 80px;background:var(--bg-secondary);border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color);">
+        <div class="container-custom">
+            <div style="text-align:center;margin-bottom:3rem;">
+                <p class="section-label">Built With</p>
+                <h2 class="section-title">Modern Tech Stack</h2>
+            </div>
+            <div style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;">
+                <div class="glass-card" style="text-align:center;padding:1.5rem 2rem;min-width:140px;">
+                    <div style="font-size:2rem;margin-bottom:0.5rem;">🟢</div>
+                    <div style="font-weight:700;font-size:0.9rem;">Node.js</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);">Runtime</div>
+                </div>
+                <div class="glass-card" style="text-align:center;padding:1.5rem 2rem;min-width:140px;">
+                    <div style="font-size:2rem;margin-bottom:0.5rem;">⚡</div>
+                    <div style="font-weight:700;font-size:0.9rem;">Express</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);">Framework</div>
+                </div>
+                <div class="glass-card" style="text-align:center;padding:1.5rem 2rem;min-width:140px;">
+                    <div style="font-size:2rem;margin-bottom:0.5rem;">🍃</div>
+                    <div style="font-weight:700;font-size:0.9rem;">MongoDB</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);">Database</div>
+                </div>
+                <div class="glass-card" style="text-align:center;padding:1.5rem 2rem;min-width:140px;">
+                    <div style="font-size:2rem;margin-bottom:0.5rem;">🎨</div>
+                    <div style="font-weight:700;font-size:0.9rem;">Custom CSS</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);">Styling</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-custom">
+        <div class="container-custom">
+            <div class="footer-brand">TaskManager</div>
+            <div class="footer-divider"></div>
+            <p>Assignment 4 — Web Technologies CSC-251</p>
+            <p>Student: <strong style="color:var(--text-secondary);">Adan</strong> · Roll No: <strong style="color:var(--text-secondary);">1006</strong></p>
+            <p>PMAS Arid Agriculture University Rawalpindi</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile nav toggle
+        const toggle = document.getElementById('navToggle');
+        const links = document.getElementById('navLinks');
+        if (toggle) {
+            toggle.addEventListener('click', () => {
+                links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+            });
+        }
+
+        // Responsive check
+        function checkNav() {
+            if (window.innerWidth <= 768) {
+                toggle.style.display = 'block';
+                links.style.flexDirection = 'column';
+                links.style.position = 'absolute';
+                links.style.top = '100%';
+                links.style.left = '0';
+                links.style.right = '0';
+                links.style.background = 'rgba(10,10,15,0.95)';
+                links.style.padding = '1rem';
+                links.style.borderBottom = '1px solid var(--border-color)';
+                links.style.display = 'none';
+            } else {
+                toggle.style.display = 'none';
+                links.style.flexDirection = 'row';
+                links.style.position = 'static';
+                links.style.background = 'none';
+                links.style.padding = '0';
+                links.style.borderBottom = 'none';
+                links.style.display = 'flex';
+            }
+        }
+        checkNav();
+        window.addEventListener('resize', checkNav);
+    </script>
+</body>
+</html>
